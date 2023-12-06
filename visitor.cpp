@@ -9,9 +9,9 @@ class Terrain;
 
 class Visitor{
 public:
-	virtual void InteractPlayer(const Player *p) const = 0;
-	virtual void InteractFoe(const Foe *f) const = 0;
-	virtual void InteractTerrain(const Terrain *t) const = 0;
+	virtual void InteractPlayer(Player *p) = 0;
+	virtual void InteractFoe(Foe *f) = 0;
+	virtual void InteractTerrain(Terrain *t) = 0;
 };
 
 class Element{
@@ -20,7 +20,7 @@ protected:
 public:
 	Element(): state(true) {}
 	virtual ~Element(){}
-	virtual void Interact(Visitor *v) const = 0;
+	virtual void Interact(Visitor *v) = 0;
 };
 class Entity: public Element{
 protected:
@@ -28,6 +28,7 @@ protected:
 	int ATK;
 public:
 	Entity(int HP = 1, int ATK = 1) : HP(HP), ATK(ATK), Element(){}
+	int getATK() {return ATK;}
 };
 
 class Player: public Entity{
@@ -42,12 +43,12 @@ public:
 		cout << "HP: " << HP << ", ATK: " << ATK << endl;
 	}
 	
-	void Interact(Visitor *v) const{
+	void Interact(Visitor *v) {
 		v->InteractPlayer(this);
 	}
 	
 	int DamagePlayer(int input_ATK) {
-		if (state)
+		if (!state)
 			return 0;
 		HP -= input_ATK;
 		if (HP <= 0){
@@ -70,12 +71,12 @@ public:
 		cout << "HP: " << HP << ", ATK: " << ATK << endl;
 	}
 	
-	void Interact(Visitor *v) const{
+	void Interact(Visitor *v) {
 		v->InteractFoe(this);
 	}
 	
 	int DamageFoe(int input_ATK) {
-		if (state)
+		if (!state)
 			return 0;
 		HP -= input_ATK;
 		if (HP <= 0){
@@ -103,17 +104,17 @@ public:
 		drops_num[2] = count3;
 	}
 	
-	void ShowInfoTerrain() const{
+	void ShowInfoTerrain() {
 		cout << type << ": " << endl;
 		for (int i = 0; i < 3; i++)
 			cout << drops[i] << ": " << drops_num[i] << endl;
 	}
-	void Interact(Visitor *v) const{
+	void Interact(Visitor *v) {
 		v->InteractTerrain(this);
 	}
 	
 	int DamageTerrain(int input_ATK) {
-		if (state)
+		if (!state)
 			return 0;
 		if (input_ATK < 300){
 			cout << "Can't destroy!";
@@ -129,38 +130,38 @@ public:
 
 class ScanVisitor: public Visitor{
 public:
-	void InteractPlayer(const Player *p) const{
+	void InteractPlayer(Player *p) {
 		cout << "Player info: " << endl;
 		p->ShowStatusPlayer();
 	}
-	void InteractFoe(const Foe *f) const{
+	void InteractFoe(Foe *f) {
 		cout << "Enemy info: " << endl;
 		f->ShowStatusFoe();
 	}
-	void InteractTerrain(const Terrain *t) const{
+	void InteractTerrain(Terrain *t) {
 		cout << "Current building: " << endl;
 		t->ShowInfoTerrain();
 	}
 };
 
-//class AttackVisitor: public Visitor{
-//private:
-//	int input_ATK;
-//public:
-//	AttackVisitor(int input = 100) : input_ATK(input) {}
-//	void InteractPlayer(const Player *p) const {
-//		cout << "Fighiting Player: " << endl;
-//		p->DamagePlayer(input_ATK);
-//	}
-//	void InteractFoe(const Foe *f) const{
-//		cout << "Enemy info: " << endl;
-//		f->DamageFoe(input_ATK);
-//	}
-//	void InteractTerrain(const Terrain *t) const{
-//		cout << "Current building: " << endl;
-//		t->DamageTerrain(input_ATK);
-//	}
-//};
+class AttackVisitor: public Visitor{
+private:
+	Entity *pe;
+public:
+	AttackVisitor(Entity *pe_ = NULL) : pe(pe_) {}
+	void InteractPlayer(Player *p) {
+		cout << "Fighiting Player:... " << endl;
+		p->DamagePlayer(pe->getATK());
+	}
+	void InteractFoe(Foe *f) {
+		cout << "Fighting Enemy:... " << endl;
+		f->DamageFoe(pe->getATK());
+	}
+	void InteractTerrain(Terrain *t) {
+		cout << "Destroying building:... " << endl;
+		t->DamageTerrain(pe->getATK());
+	}
+};
 
 void Demo(Element **list, int n, Visitor *v){
 	for (int i = 0; i < n; i++){
@@ -182,25 +183,28 @@ int main(){
 	Element *list[5] = {P1, P2, F1, F2, T}; 
 	
 	ScanVisitor *scv = new ScanVisitor;
-//	AttackVisitor *atv = new AttackVisitor(300);
+	AttackVisitor *atv = new AttackVisitor(P1);
 	
 	cout  << endl << "=============================================================" << endl;
 	
 	Demo(list, 5, scv);
 	
-//	cout  << endl << "=============================================================" << endl;
-//	
-//	Demo(list, 5, atv);
-//	
-//	cout  << endl << "=============================================================" << endl;
-//	
-//	Demo(list, 5, scv);
-//	
-//	cout  << endl << "=============================================================" << endl;
-//	
+	cout  << endl << "=============================================================" << endl;
+	
+	Demo(list, 5, atv);
+	
+	cout  << endl << "=============================================================" << endl;
+	
+	Demo(list, 5, scv);
+	
+	cout  << endl << "=============================================================" << endl;
+	
 	
 	for (int i = 0; i < 5; i++)
 		delete list[i];
+	
+	delete scv;
+	delete atv;
 	
 	return 0;
 }
