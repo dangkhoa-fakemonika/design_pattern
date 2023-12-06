@@ -351,14 +351,20 @@ private:
 int main() {
     CraftingFacade myBag;
 	
-	
+	// Facade instruction:
+	//	addItem()
+	//  removeItem()
+	//  displayInventory()
+	// 	craftItem()
+
+
     // Display initial inventory
     myBag.displayInventory();
 
     // Add some items
 	myBag.addItem("Long Sword", 1);
 	myBag.addItem("Long Sword", 2);
-	
+
 	// Add unknown items
 	myBag.addItem("MY BALL", 69);
 
