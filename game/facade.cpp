@@ -83,7 +83,7 @@ public:
 
 class CraftingFacade {
 private:
-    unordered_map<Item*, int> *inventory;
+    unordered_map<Item*, int> inventory;
     vector<CraftingRecipe*> craftingRecipes;
 
 public:
