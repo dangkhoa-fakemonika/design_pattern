@@ -65,6 +65,7 @@ protected:
 public:
 	Entity(string name, int baseHP, int baseATK);
 	bool getState();
+	string getName();
 	virtual int getATK() = 0;
 	virtual int getHP() = 0;
 	virtual void Interact(Visitor *v) = 0;
@@ -132,7 +133,7 @@ public:
 	void Interact(Visitor *v);
 	int Attacked(int input_ATK);
 	void SingularAttack(AttackVisitor *atv, Entity *target);
-	void HealPlayer(HealVisitor *hlv, Entity *target);
+	void HealTarget(HealVisitor *hlv, Entity *target);
 	void Healed(int HPsource);
 	void ShowInfo();
 };

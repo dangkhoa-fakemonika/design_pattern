@@ -47,7 +47,7 @@ void Player::SingularAttack(AttackVisitor *atv, Entity *target){
 	}
 }
 
-void Player::HealPlayer(HealVisitor *hlv, Entity *target){
+void Player::HealTarget(HealVisitor *hlv, Entity *target){
 	hlv->SetHealer(this);
 	target->Interact(hlv);
 }
