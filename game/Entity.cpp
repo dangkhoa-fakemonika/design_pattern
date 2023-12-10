@@ -4,12 +4,12 @@
 Entity::Entity(string name = "",int baseHP = 1000,int baseATK = 100)
 : state(true), name(name), baseHP(baseHP), baseATK(baseATK), buffATK(0), currentHP(baseHP) {}
 
-bool Entity::getState(){return state;}
-string Entity::getName(){return name;}
+bool Entity::getState() { return state; }
+string Entity::getName() { return name; }
 
 Foe::Foe(string name = "",int baseHP = 1000,int baseATK = 100, int EXPdrop = 500): Entity(name, baseHP, baseATK), EXPdrop(EXPdrop) {}
-Foe::getATK(){return baseATK + buffATK;}
-Foe::getHP(){return baseHP;}
+int Foe::getATK() { return baseATK + buffATK; }
+int Foe::getHP() { return baseHP; }
 
 void Foe::ShowInfo(){
 	cout << "<" << name << "> - [HP : " << currentHP << "/" << getHP() << "] [ATK : " << getATK() << "] [EXP : " << EXPdrop << "]";
