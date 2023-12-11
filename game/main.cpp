@@ -5,116 +5,35 @@
 
 int main(){
 	srand(time(NULL));
+	string nametemp;
+	cout << "Enter your name: ";
+	getline(cin, nametemp);
 	
-	BossFoe *boss = new BossFoe("Baron Nashor", 10000, 450, 0);
-	NormalFoe *foe = new NormalFoe("Scuttle Crab", 1000, 10, 0);
-	Player *p1 = new Player("Healer", 70000, 9000);
-//	Player *p2 = new Player("Attacker", 35000, 400);
+	Player *p1 = new Player(nametemp, 20000, 9000);
+	Player *p2 = new Player(nametemp + "'s healer", 70000, 400);
 	
-	vector<Entity*> enemies;
-	enemies.push_back(boss);
-	enemies.push_back(foe);
 	vector<Entity*> players;
+	players.push_back(p1);
+	players.push_back(p2);
 	
-	
-	InfoVisitor *iv = new InfoVisitor();
-	AttackVisitor *av = new AttackVisitor();
-	HealVisitor *hv = new HealVisitor();
-	
-	CraftingFacade *CraftingTable = new CraftingFacade;
-	CraftingTable->setCrafter(p1->getInventory());
-	
-	int action;
-	bool ingame = true, quit = false;
-	
+	Game maingame;
 	int options;
-	cout << "Choose option: ";
-	
-	int index;
-	cout << p1->getName() << " strikes first! " << endl;
-	while (ingame){
-		ingame = false;
-		cout << "Choose your action: " << endl;
-		cout << "[1] Attack | [2] Heal | [3] Take Info | [4] Skip turn | [5] Quit" << endl;
-		cin >> action;
-		switch (action){
-			case 1:
-				cout << "Choose your target: " << endl;
-				for (int i = 0; i < enemies.size(); i++)
-					if (enemies[i] != NULL)
-						cout << "[" << i + 1 << "] " << enemies[i]->getName() << endl; 
-				cin >> index;
-				cout << p1->getName() << " attack " << enemies[index - 1]->getName() << " !" << endl;
-				p1->SingularAttack(av, enemies[index - 1]);
-				break;
-			case 2:
-				cout << "Healing " << p1->getName() << "!" << endl;
-				p1->HealTarget(hv, p1);
-				break;
-			case 3:
-				p1->ShowInfo();
-				cout << endl;
-				cout << "Taking info of enemies..." << endl;
-				cout << "###########################################" << endl;
-				for (int i = 0; i < enemies.size(); i++){
-						enemies[i]->ShowInfo();
-						cout << endl;
-				}
-				cout << "###########################################" << endl;
-				break;
-			case 4:
-				cout << "Skipping turn..." << endl;
-				break;
-			case 5:
-				cout << "Quitting..." << endl;
-				quit = true;
-				break;
-			default:
-				break;
-		}
-		if (quit){
-			ingame = false;
+	while (true){
+		cout << "Select option: " << endl;
+		cout << "[1] FIGHT!!! | [2] Shop n' craft | [3] Quit" << endl;
+		cin >> options;
+		if (options == 1)
+			maingame.Combat(players);
+		else if (options == 2)
+			maingame.ShopnCraft(p1);
+		else if (options == 3)
 			break;
-		}
-		for (int i = 0; i < enemies.size(); i++)
-			if (!enemies[i]->getState()){
-				enemies.erase(enemies.begin() + i);
-			}
-		
-		if (enemies.size() == 0){
-			ingame = false;
-			break;
-		}
 		else
-			ingame = true;
-		
-		if (boss->getState()){
-			cout << boss->getName() << " is attacking! " << endl;
-			if (rand() % 11 == 7)
-				boss->SpecialAttack(av,p1);
-			else
-				boss->SingularAttack(av, p1);
-		}
-		if (foe->getState()){
-			cout << foe->getName() << " is attacking! " << endl;		
-			foe->SingularAttack(av, p1);
-		}
-		
-		if (!p1->getState()){
-			ingame = false;
-			cout << "GAME OVER!" << endl;
-		}
+			cout << "Invalid option.";
 	}
-	cout << "Battle points: " << av->GetBattlePoints() / 1000 << endl;
-	delete iv;
-	delete av;
-	delete hv;
 	
-	delete boss;
-	delete foe;
-	
-	if (p1 != NULL)
-		delete p1;
+	delete p1;
+	delete p2;
 	
 	return 0;
 }

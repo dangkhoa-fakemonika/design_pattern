@@ -55,6 +55,14 @@ public:
 	void InteractBossFoe(BossFoe *bf);
 };
 
+class InteractiveVisitors{
+public:
+	AttackVisitor Attack;
+	HealVisitor Heal;
+	InfoVisitor Info;
+	InteractiveVisitors(Entity *source);
+};
+
 class Entity{
 protected:
 	string name;
@@ -75,6 +83,8 @@ public:
 	virtual void SingularAttack(AttackVisitor *atv, Entity *target) = 0;
 	virtual void HealTarget(HealVisitor *hlv, Entity *target) = 0;
 	virtual void ShowInfo() = 0;
+	virtual void ResetState();
+	virtual void TakeAction(vector<Entity*> players, vector<Entity*> enemies, InteractiveVisitors *v) = 0;
 };
 
 class Foe : public Entity{
@@ -93,6 +103,7 @@ class NormalFoe : public Foe{
 public:
 	NormalFoe(string name, int baseHP, int baseATK, int EXPdrop);
 	void Interact(Visitor *v);
+	void TakeAction(vector<Entity*> players, vector<Entity*> enemies, InteractiveVisitors *v);
 	int Attacked(int input_ATK);
 	void Healed(int HPsource);
 	void Flee();
@@ -105,6 +116,7 @@ private:
 public:
 	EpicFoe(string name, int baseHP, int baseATK, int EXPdrop);
 	void Interact(Visitor *v);
+	void TakeAction(vector<Entity*> players, vector<Entity*> enemies, InteractiveVisitors *v);
 	int Attacked(int input_ATK);
 	void Healed(int HPsource);
 	void SpecialAttack(AttackVisitor *atv, Entity *tar1, Entity *tar2);
@@ -116,6 +128,7 @@ private:
 public:
 	BossFoe(string name, int baseHP, int baseATK, int EXPdrop);
 	void Interact(Visitor *v);
+	void TakeAction(vector<Entity*> players, vector<Entity*> enemies, InteractiveVisitors *v);
 	int Attacked(int input_ATK);
 	void Healed(int HPsource);
 	void SpecialAttack(AttackVisitor *atv, Entity *tar1, Entity *tar2);
@@ -134,6 +147,8 @@ public:
 	int getATK();
 	int getHP();
 	void Interact(Visitor *v);
+	void TakeAction(vector<Entity*> players, vector<Entity*> enemies, InteractiveVisitors *v);
+	void ResetState();
 	int Attacked(int input_ATK);
 	void SingularAttack(AttackVisitor *atv, Entity *target);
 	void HealTarget(HealVisitor *hlv, Entity *target);

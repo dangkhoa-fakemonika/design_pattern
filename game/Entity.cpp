@@ -7,7 +7,13 @@ Entity::Entity(string name = "",int baseHP = 1000,int baseATK = 100)
 bool Entity::getState() { return state; }
 string Entity::getName() { return name; }
 
-Foe::Foe(string name = "",int baseHP = 1000,int baseATK = 100, int EXPdrop = 500): Entity(name, baseHP, baseATK), EXPdrop(EXPdrop) {}
+void Entity::ResetState(){
+	state = true;
+	buffATK = 0;
+	currentHP = baseHP;
+}
+
+Foe::Foe(string name = "", int baseHP = 1000, int baseATK = 100, int EXPdrop = 500): Entity(name, baseHP, baseATK), EXPdrop(EXPdrop) {}
 int Foe::getATK() { return baseATK + buffATK; }
 int Foe::getHP() { return baseHP; }
 
@@ -131,14 +137,23 @@ Player::~Player(){
 
 unordered_map<Item*, int>* Player::getInventory(){return &inventory;}
 int Player::getATK(){
-	itemsATK = 0;
-	for (const auto& it : inventory)
-		itemsATK += it.first->getBonusATK();
 	return baseATK + buffATK + itemsATK;
 }
 int Player::getHP(){return baseHP + itemsHP;}
 void Player::Interact(Visitor *v){
 	v->InteractPlayer(this);
+}
+
+void Player::ResetState(){
+	itemsATK = 0;
+	itemsHP = 0;
+	state = true;
+	for (const auto& it : inventory){
+		itemsATK += it.first->getBonusATK() * it.second;
+		itemsHP += it.first->getBonusHP() * it.second;
+	}
+	buffATK = 0;
+	currentHP = baseHP + itemsHP;
 }
 
 int Player::Attacked(int input_ATK){
@@ -153,7 +168,7 @@ int Player::Attacked(int input_ATK){
 	if (currentHP <= 0){
 		currentHP = 0;
 		state = false;
-		cout << name << " has fallen down!" << endl;
+		cout << name << " has been knocked out!" << endl;
 		return -100;
 	}
 	return input_ATK / 10;

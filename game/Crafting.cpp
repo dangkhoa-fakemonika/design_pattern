@@ -142,13 +142,13 @@ void CraftingFacade::initializeCraftingRecipes() {
 
     craftingRecipes.push_back(new CraftingRecipe(new Item(8, "Needlessly Large Rod", 50, 0), {{getItemByName("Fiendish Codex"), 1}, {getItemByName("Cloak of Agility"), 1}}));
 
-    craftingRecipes.push_back(new CraftingRecipe(new Item(9, "Galeforce", 30, 15), {{getItemByName("Zeal"), 1},{getItemByName("Long Sword"), 2}}));
+    craftingRecipes.push_back(new CraftingRecipe(new Item(9, "Galeforce", 30, 15), {{getItemByName("Zeal"), 1},{getItemByName("Long Long Sword"), 1}}));
 
-    craftingRecipes.push_back(new CraftingRecipe(new Item(10, "Divine Sunderer", 40, 20), {{nullptr, 1}}));
+    craftingRecipes.push_back(new CraftingRecipe(new Item(10, "Divine Sunderer", 40, 20), {{getItemByName("Zeal"), 1}, {getItemByName("Phage"),1}}));
 
-    craftingRecipes.push_back(new CraftingRecipe(new Item(11, "Night Harvester", 45, 15), {{nullptr, 1}}));
+    craftingRecipes.push_back(new CraftingRecipe(new Item(11, "Night Harvester", 45, 15), {{getItemByName("Zeal"), 1},{getItemByName("Hextech Alternator"),1}}));
 
-    craftingRecipes.push_back(new CraftingRecipe(new Item(12, "Rabadon's Deathcap", 80, 0), {{nullptr, 1}}));
+    craftingRecipes.push_back(new CraftingRecipe(new Item(12, "Rabadon's Deathcap", 80, 0), {{getItemByName("Needlessly Large Rod"), 2}}));
     
 	craftingRecipes.push_back(new CraftingRecipe(new Item(13, "Long Long Sword", 100, 100), {{getItemByName("Long Sword"), 2}})); // craft by 2 Long Sword
 	

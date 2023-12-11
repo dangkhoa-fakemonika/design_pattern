@@ -62,3 +62,8 @@ void InfoVisitor::InteractEpicFoe(EpicFoe *ef){
 void InfoVisitor::InteractBossFoe(BossFoe *bf){
 	bf->ShowInfo();
 }
+
+InteractiveVisitors::InteractiveVisitors(Entity *Source = NULL){
+	Attack.SetAttacker(Source);
+	Heal.SetHealer(Source);
+}

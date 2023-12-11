@@ -1,6 +1,7 @@
 #pragma once
 #include "Visitor.h"
 #include "Entity.h"
+#include "Combat.h"
 
 void Foe::SingularAttack(AttackVisitor *atv, Entity *target){
 	atv->SetAttacker(this);
@@ -52,3 +53,250 @@ void Player::HealTarget(HealVisitor *hlv, Entity *target){
 	target->Interact(hlv);
 }
 
+void NormalFoe::TakeAction(vector<Entity*> players, vector<Entity*> enemies, InteractiveVisitors *v){
+	if (rand() % 10 == 1)
+		cout << name << " does nothing!";
+	else{
+		v->Attack.SetAttacker(this);
+		SingularAttack(&v->Attack, players[rand() % players.size()]);
+	}
+}
+
+void EpicFoe::TakeAction(vector<Entity*> players, vector<Entity*> enemies, InteractiveVisitors *v){
+	int action = rand() % 10;
+	if (action > 7){
+		v->Heal.SetHealer(this);
+		for (int i = 0; i < enemies.size(); i++)
+			HealTarget(&v->Heal, enemies[i]);
+	}
+	else if (action > 6){
+		v->Attack.SetAttacker(this);
+		SpecialAttack(&v->Attack, players[rand() % players.size()], players[rand() % players.size()]);
+	}
+	else{
+		v->Attack.SetAttacker(this);
+		SingularAttack(&v->Attack, players[rand() % players.size()]);
+	}
+}
+
+void BossFoe::TakeAction(vector<Entity*> players, vector<Entity*> enemies, InteractiveVisitors *v){
+	int action = rand() % 10;
+	if (action > 9 && enemies.size() == 1){
+		cout << name << " is spawning minions!!!!" ;
+		enemies.push_back(new NormalFoe("Voidgrubs", 800, 150, 0));
+		enemies.push_back(new NormalFoe("Voidgrubs", 800, 150, 0));
+	}
+	else if (action > 6){
+		v->Attack.SetAttacker(this);
+		SpecialAttack(&v->Attack, players[rand() % players.size()], players[rand() % players.size()]);
+	}
+	else{
+		v->Attack.SetAttacker(this);
+		SingularAttack(&v->Attack, players[rand() % players.size()]);
+	}
+}
+
+void Player::TakeAction(vector<Entity*> players, vector<Entity*> enemies, InteractiveVisitors *v){
+	int action, index;
+	v->Attack.SetAttacker(this);
+	v->Heal.SetHealer(this);
+	cout << name << "'s turn!" << endl;
+	cout << "Choose your action: " << endl;
+	cout << "[1] Attack | [2] Heal | [3] Take Info | [4] Skip turn " << endl;
+	cin >> action;
+	switch (action){
+		case 1:
+			cout << "Choose your target: " << endl;
+			for (int i = 0; i < enemies.size(); i++)
+				if (enemies[i] != NULL)
+					cout << "[" << i + 1 << "] " << enemies[i]->getName() << endl; 
+			cin >> index;
+			cout << name << " attack " << enemies[index - 1]->getName() << " !" << endl;
+			SingularAttack(&v->Attack, enemies[index - 1]);
+			break;
+		case 2:
+			cout << "Choose your target: " << endl;
+			for (int i = 0; i < players.size(); i++)
+				if (players[i] != NULL)
+					cout << "[" << i + 1 << "] " << players[i]->getName() << endl; 
+			cin >> index;
+			cout << name << " heals " << players[index - 1]->getName() << " !" << endl;
+			HealTarget(&v->Heal, enemies[index - 1]);
+			break;
+		case 3:
+			cout << endl;
+			cout << "Taking info of enemies..." << endl;
+			cout << "###########################################" << endl;
+			for (int i = 0; i < enemies.size(); i++){
+					enemies[i]->ShowInfo();
+					cout << endl;
+			}
+			cout << "###########################################" << endl;
+			break;
+		case 4:
+			cout << "Skipping turn..." << endl;
+			break;
+		default:
+			break;
+	}
+}
+
+Game::Game() : gold(0), level(1){}
+
+void Game::setLevel(){
+	cout << "Set level (1 | 2): ";
+	cin >> level;
+	while (level != 1 || level != 2){
+		cout << "Invalid level!";
+		cout << "Set level (1 | 2): ";
+		cin >> level;
+	}
+}
+
+void Game::Combat(vector<Entity*> players){
+	for (int i = 0; i < players.size(); i++)
+		players[i]->ResetState();
+	
+	vector<Entity*> enemies;
+	vector<Entity*> dead_players;
+	
+	InteractiveVisitors* v = new InteractiveVisitors;
+	Entity* e1 = NULL;
+	Entity* e2 = NULL;
+	Entity* e3 = NULL;
+	
+	if (level == 1){
+		e1 = new EpicFoe("Red Brambleback", 4000, 500, 100);
+		e2 = new EpicFoe("Blue Sentinel", 5500, 400, 100);
+		enemies.push_back(e1);
+		enemies.push_back(e2);
+	}
+	else if (level == 2){
+		e1 = new NormalFoe("Voidgrubs", 1000, 250, 20);
+		e2 = new BossFoe("Baron Nashor", 7000, 650, 500);
+		e3 = new NormalFoe("Voidgrubs", 1000, 250, 20);	
+		enemies.push_back(e1);
+		enemies.push_back(e2);
+		enemies.push_back(e3);	
+	}
+	else{
+		cout << "No level option available.";
+		return;
+	}
+	
+	bool ingame = true;
+	while(ingame){
+		for (int i = 0; i < players.size(); i++)
+			players[i]->TakeAction(players, enemies, v);
+		for (int i = 0; i < enemies.size(); i++)
+			if (!enemies[i]->getState()){
+				delete enemies[i];
+				enemies[i] = NULL;
+				enemies.erase(enemies.begin() + i);
+			}
+		if (enemies.size() == 0){
+			ingame = false;
+			cout << "BATTLE WON!" << endl;
+		}
+		else
+			ingame = true;
+			
+		for (int i = 0; i < enemies.size(); i++)
+			enemies[i]->TakeAction(players, enemies, v);
+		
+		for (int i = 0; i < players.size(); i++)
+			if (!players[i]->getState()){
+				dead_players.push_back(players[i]);
+				players.erase(players.begin() + i);
+			}
+		
+		if (players.size() == 0){
+			ingame = false;
+			cout << "y o u   d i e d" << endl;
+		}
+		else
+			ingame = true;
+	}
+	
+	gold = v->Attack.GetBattlePoints() / 1000;
+	for (int i = 0; i < dead_players.size(); i++){
+		dead_players[i]->ResetState();
+		players.push_back(dead_players[i]);
+	}
+}
+
+void Game::ShopnCraft(Player *p){
+	CraftingFacade *ShopAndCraft;
+	ShopAndCraft->setCrafter(p->getInventory());
+	
+	string item_list[14] = {
+		"Long Sword",
+		"Cloak of Agility",
+		"Kindle Gem",
+		"Fiendish Codex",
+		"Zeal",
+		"Phage",
+		"Hextech Alternator",
+		"Needlessly Large Rod",
+		"Divine Sunderer",
+		"Night Harvester",
+		"Rabadon's Deathcap",
+		"Long Long Sword",
+		"Impossible Sword",
+	};
+	
+	int action, option, amount;
+	bool quit = true;
+	while (quit){
+		cout << "Current gold: " << gold << endl << "Choose action: " << endl;
+		cout << "Current Inventory: " << endl;
+			ShopAndCraft->displayInventory();
+		cout << "[1] Buy | [2] Craft | [3] Sell" << endl;
+		cin >> action;
+		switch (action){
+			case 1:
+				cout << "Buy items (400G each): " << endl;
+				for (int i = 0; i < 4; i++)
+					cout << "[" << i + 1 << "] " << item_list[i] << endl;
+				cin >> option;
+				cout << "Quantity? : ";
+				cin >> amount;
+				if (option > 3 || option < 1 || amount < 1)
+					cout << "Invalid option." << endl;
+				else if (gold < 400 * amount)
+					cout << "Not sufficient funds!" << endl;
+				else{
+					while(amount-- != 0)	
+					ShopAndCraft->addItem(item_list[option - 1], 1);
+				}
+				break;
+			case 2:
+				cout << "Craft items (50G craft fees): " << endl;
+				for (int i = 4; i < 13; i++)
+					cout << "[" << i - 3 << "] " << item_list[i] << endl;
+				cin >> option;
+				if (option > 10 || option < 1)
+					cout << "Invalid option." << endl;
+				else if (gold < 50)
+					cout << "Not sufficient funds!" << endl;
+				else{
+					ShopAndCraft->craftItem(item_list[option + 3]);
+				}
+				break;
+			case 3:
+				cout << "Can't sell your items due to inflation." << endl;
+//				int index = 1;
+//				for (const auto& entry : *inventory){
+//					if (entry.second != 0)
+//			        	cout << "[" << index++ << "]" << entry.first->getName() << ": " << entry.second << "\n";
+//			    }
+				break;
+		}
+		
+		cout << "Continue browsing? (1 = yes, 0 = no)" << endl;
+		cin >> quit;
+	}
+	
+	
+	ShopAndCraft->resetCrafter();
+}
