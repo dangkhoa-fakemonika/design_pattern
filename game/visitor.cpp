@@ -23,6 +23,10 @@ void AttackVisitor::InteractBossFoe(BossFoe *bf){
 	BattlePoints += bf->Attacked(ATK);
 }
 
+int AttackVisitor::GetBattlePoints(){
+	return BattlePoints;
+}
+
 HealVisitor::HealVisitor() : Healer(NULL), HP(0){}
 
 void HealVisitor::SetHealer(Entity *e = NULL){

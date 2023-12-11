@@ -1,5 +1,6 @@
 #pragma once
 #include "Crafting.h"
+#include "Entity.h"
 
 Item::Item(int itemId, const string& itemName, int atkBonus, int hpBonus): id(itemId), name(itemName), bonusATK(atkBonus), bonusHP(hpBonus) {}
 
@@ -65,8 +66,8 @@ CraftingFacade::~CraftingFacade() {
         delete recipe;
     }
 }
-void CraftingFacade::setCrafter(Player *p){
-	inventory = p->getInventory();
+void CraftingFacade::setCrafter(unordered_map<Item*, int> *inv){
+	inventory = inv;
 }
 
 void CraftingFacade::resetCrafter(){

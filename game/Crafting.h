@@ -4,10 +4,8 @@
 #include <string>
 #include <vector>
 #include <iomanip>
-#include "Entity.h"
 
 using namespace std;
-
 
 class Item {
 private:
@@ -45,7 +43,7 @@ private:
 public:
     CraftingFacade();
     ~CraftingFacade();
-    void setCrafter(Player *p);
+    void setCrafter(unordered_map<Item*, int> *inv);
     void resetCrafter();
     void craftItem(const string& itemName);
     void displayInventory() const;

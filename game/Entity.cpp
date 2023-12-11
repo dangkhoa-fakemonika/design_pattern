@@ -110,7 +110,7 @@ int BossFoe::Attacked(int input_ATK){
 		else{
 			currentHP = 0;
 			state = false;
-			cout << name << " has fallen!";
+			cout << name << " has fallen!" << endl;
 			return max(EXPdrop - input_ATK / 100, 300);
 		}
 	}
@@ -121,11 +121,21 @@ void BossFoe::Healed(int HPsource){
 	currentHP += baseHP * 0.2 + 20;
 }
 
-Player::Player(string name = "", int baseHP = 15000, int baseATK = 250): Entity(name, baseHP, baseATK), item_slots(0), itemsATK(0), itemsHP(0) {
+Player::Player(string name = "", int baseHP = 15000, int baseATK = 250): Entity(name, baseHP, baseATK), itemsATK(0), itemsHP(0), total_gold(0) {
 	cout << name << " joins combat!" << endl;
 }
+
+Player::~Player(){
+	
+}
+
 unordered_map<Item*, int>* Player::getInventory(){return &inventory;}
-int Player::getATK(){return baseATK + buffATK + itemsATK;}
+int Player::getATK(){
+	itemsATK = 0;
+	for (const auto& it : inventory)
+		itemsATK += it.first->getBonusATK();
+	return baseATK + buffATK + itemsATK;
+}
 int Player::getHP(){return baseHP + itemsHP;}
 void Player::Interact(Visitor *v){
 	v->InteractPlayer(this);
@@ -157,5 +167,6 @@ void Player::Healed(int HPsource){
 }
 
 void Player::ShowInfo(){
-	cout << "<" << name << "> - [HP : " << currentHP << "/" << getHP() << "] [ATK : " << getATK() << "]";
+	getATK();
+	cout << "<" << name << "> - [HP : " << currentHP << "/" << getHP() << "] [ATK : " << baseATK << "(+ " << buffATK + itemsATK << ")]";
 }

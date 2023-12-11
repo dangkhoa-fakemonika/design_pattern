@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include "Visitor.h"
-#include "Crafting.h"
 
 using namespace std;
 
@@ -27,6 +26,7 @@ private:
 public:
 	AttackVisitor();
 	void SetAttacker(Entity *e);
+	int GetBattlePoints();
 	void InteractPlayer(Player *p);
 	void InteractNormalFoe(NormalFoe *nf);
 	void InteractEpicFoe(EpicFoe *ef);
@@ -124,11 +124,12 @@ public:
 class Player : public Entity{
 private:
 	unordered_map<Item*, int> inventory;
-	int item_slots;
 	int itemsATK;
 	int itemsHP;
+	int total_gold;
 public:
 	Player(string name, int baseHP, int baseATK);
+	~Player();
 	unordered_map<Item*, int>* getInventory(); 
 	int getATK();
 	int getHP();
