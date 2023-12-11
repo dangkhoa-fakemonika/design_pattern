@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "Visitor.h"
+#include "Crafting.h"
 
 using namespace std;
 
@@ -122,12 +123,13 @@ public:
 
 class Player : public Entity{
 private:
-//	unordered_map<Item*, int> inventory;
+	unordered_map<Item*, int> inventory;
 	int item_slots;
 	int itemsATK;
 	int itemsHP;
 public:
 	Player(string name, int baseHP, int baseATK);
+	unordered_map<Item*, int>* getInventory(); 
 	int getATK();
 	int getHP();
 	void Interact(Visitor *v);

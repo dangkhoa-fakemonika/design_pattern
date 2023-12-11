@@ -83,7 +83,7 @@ public:
 
 class CraftingFacade {
 private:
-    unordered_map<Item*, int> *inventory;
+    unordered_map<Item*, int> inventory;
     vector<CraftingRecipe*> craftingRecipes;
 
 public:
@@ -167,7 +167,7 @@ private:
 
         craftingRecipes.push_back(new CraftingRecipe(
             new Item(5, "Zeal", 15, 10),
-            {{nullptr, 1}}));
+            {{getItemByName("Long Sword"), 1}, {getItemByName("Cloak of Agility"), 1}}));
 
         craftingRecipes.push_back(new CraftingRecipe(
             new Item(6, "Phage", 20, 10),
@@ -239,7 +239,7 @@ int main() {
     // Add some items
 	myBag.addItem("Long Sword", 1);
 	myBag.addItem("Long Sword", 2);
-
+	myBag.addItem("Cloak of Agility", 1);
 	// Add unknown items
 	myBag.addItem("MY BALL", 69);
 
@@ -248,6 +248,7 @@ int main() {
 	// Craft basic item(you cant)
 	myBag.craftItem("Long Sword");
 	// Craft item
+	myBag.craftItem("Zeal");
 	myBag.craftItem("Long Long Sword");
 	// Attempt to craft an unknown item
     myBag.craftItem("Unknown Item");

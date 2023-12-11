@@ -124,6 +124,7 @@ void BossFoe::Healed(int HPsource){
 Player::Player(string name = "", int baseHP = 15000, int baseATK = 250): Entity(name, baseHP, baseATK), item_slots(0), itemsATK(0), itemsHP(0) {
 	cout << name << " joins combat!" << endl;
 }
+unordered_map<Item*, int>* Player::getInventory(){return &inventory;}
 int Player::getATK(){return baseATK + buffATK + itemsATK;}
 int Player::getHP(){return baseHP + itemsHP;}
 void Player::Interact(Visitor *v){
