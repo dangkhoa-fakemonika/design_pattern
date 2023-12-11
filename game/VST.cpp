@@ -119,7 +119,7 @@ class Foe : public Entity{
 protected:
 	int EXPdrop;
 public:
-	Foe()
+	Foe();
 	int getATK();
 	int getHP();
 	void SingularAttack(AttackVisitor *atv, Entity *target);
@@ -191,7 +191,7 @@ public:
 		}
 	}
 	
-	void Healed(){
+	void Healed(int HPsource){
 		cout << name << " is healing up!" << endl;
 		currentHP += 100;
 	}
