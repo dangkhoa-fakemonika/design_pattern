@@ -169,8 +169,23 @@ private:
     unordered_map<Item*, int> requiredItems;
 
 public:
-    CraftingRecipe(Item* result, const unordered_map<Item*, int>& items)
-        : resultItem(result), requiredItems(items) {}
+    void showRecipe(){
+        cout << "showing " << resultItem->getName() << " recipe: \n";
+        // for (auto entry : requiredItems){
+        //     cout << entry.first->getName() << endl;
+        // }
+    }
+    CraftingRecipe(Item* result, const unordered_map<Item*, int> items)
+        : resultItem(result), requiredItems(items) {
+        cout << "showing " << resultItem->getName() << " recipe: \n";
+        if (requiredItems[NULL] == 1){
+            cout << "this is a basic item\n";
+            return;
+        }
+        for (auto entry : requiredItems){
+            cout << entry.first->getName() << endl;
+        }
+    }
 
     Item* getResultItem() const {
         return resultItem;
@@ -195,6 +210,7 @@ public:
     void craft(unordered_map<Item*, int>& inventory) {
         if (canCraft(inventory)) {
             cout << "Crafting " << resultItem->getName() << "...\n";
+            //showRecipe();
             for (const auto& entry : requiredItems) {
                 inventory[entry.first] -= entry.second;
             }
@@ -210,9 +226,10 @@ class CraftingFacade {
 private:
     unordered_map<Item*, int> inventory;
     vector<CraftingRecipe*> craftingRecipes;
-
+    vector<Item*> itemList;
 public:
     CraftingFacade() {
+        initializeItemList();
         initializeCraftingRecipes();
     }
 
@@ -273,60 +290,21 @@ public:
 	}
 
 private:
+    void initializeItemList(){
+        itemList.push_back(new Item(1, "Long Sword", 10, 0));
+        itemList.push_back(new Item(2, "Shield", 0, 10));
+        itemList.push_back(new Item(3, "Sword and Shield", 15, 10));
+    }
     void initializeCraftingRecipes() {
         craftingRecipes.push_back(new CraftingRecipe(
-            new Item(1, "Long Sword", 10, 0),
-            {{nullptr, 1}})); // Recipe: None (base item)
-
-        craftingRecipes.push_back(new CraftingRecipe(
-            new Item(2, "Cloak of Agility", 5, 5),
-            {{nullptr, 1}}));
-
-        craftingRecipes.push_back(new CraftingRecipe(
-            new Item(3, "Kindle Gem", 0, 20),
-            {{nullptr, 1}}));
-
-        craftingRecipes.push_back(new CraftingRecipe(
-            new Item(4, "Fiendish Codex", 20, 0),
-            {{nullptr, 1}}));
-
-        craftingRecipes.push_back(new CraftingRecipe(
-            new Item(5, "Zeal", 15, 10),
-            {{nullptr, 1}}));
-
-        craftingRecipes.push_back(new CraftingRecipe(
-            new Item(6, "Phage", 20, 10),
-            {{nullptr, 1}}));
-
-        craftingRecipes.push_back(new CraftingRecipe(
-            new Item(7, "Hextech Alternator", 40, 0),
-            {{nullptr, 1}}));
-
-        craftingRecipes.push_back(new CraftingRecipe(
-            new Item(8, "Needlessly Large Rod", 50, 0),
-            {{nullptr, 1}}));
-
-        craftingRecipes.push_back(new CraftingRecipe(
-            new Item(9, "Galeforce", 30, 15),
-            {{nullptr, 1}}));
-
-        craftingRecipes.push_back(new CraftingRecipe(
-            new Item(10, "Divine Sunderer", 40, 20),
-            {{nullptr, 1}}));
-
-        craftingRecipes.push_back(new CraftingRecipe(
-            new Item(11, "Night Harvester", 45, 15),
-            {{nullptr, 1}}));
-
-        craftingRecipes.push_back(new CraftingRecipe(
-            new Item(12, "Rabadon's Deathcap", 80, 0),
-            {{nullptr, 1}}));
-		craftingRecipes.push_back(new CraftingRecipe(
-            new Item(13, "Long Long Sword", 100, 100),
-            {{getItemByName("Long Sword"), 2}})); // craft by 2 Long Sword
-		craftingRecipes.push_back(new CraftingRecipe(
-            new Item(13, "Impossible Sword", 999, 999),
-            {{getItemByName("Long Sword"), 999}})); 
+            itemList[2],
+            {{itemList[1], 1}, {itemList[0], 2}}));
+		// craftingRecipes.push_back(new CraftingRecipe(
+        //     new Item(13, "Long Long Sword", 100, 100),
+        //     {{getItemByName("Long Sword"), 2}, {getItemByName("Kindle Gem"), 2}})); // craft by 2 Long Sword
+		// craftingRecipes.push_back(new CraftingRecipe(
+        //     new Item(13, "Impossible Sword", 999, 999),
+        //     {{getItemByName("Long Sword"), 999}})); 
     }
 
     Item* getItemByName(const string& itemName) const {
@@ -364,26 +342,26 @@ int main() {
     // Add some items
 	myBag.addItem("Long Sword", 1);
 	myBag.addItem("Long Sword", 2);
-
+    myBag.craftItem("Long Long Sword");
 	// Add unknown items
-	myBag.addItem("MY BALL", 69);
+	//myBag.addItem("MY BALL", 69);
 
 	myBag.displayInventory();
 
-	// Craft basic item(you cant)
-	myBag.craftItem("Long Sword");
-	// Craft item
-	myBag.craftItem("Long Long Sword");
-	// Attempt to craft an unknown item
-    myBag.craftItem("Unknown Item");
-    // Attempt to craft an item with insufficient materials
-    myBag.craftItem("Impossible Sword");
+	// // Craft basic item(you cant)
+	// myBag.craftItem("Long Sword");
+	// // Craft item
+	// myBag.craftItem("Long Long Sword");
+	// // Attempt to craft an unknown item
+    // myBag.craftItem("Unknown Item");
+    // // Attempt to craft an item with insufficient materials
+    // myBag.craftItem("Impossible Sword");
 	
 	myBag.displayInventory();
 
-	myBag.removeItem("Long Sword", 100);
-	myBag.removeItem("Long Sword", 1);
+	// myBag.removeItem("Long Sword", 100);
+	// myBag.removeItem("Long Sword", 1);
 
-	myBag.displayInventory();
+	// myBag.displayInventory();
     return 0;
 }

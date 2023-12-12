@@ -20,15 +20,20 @@ int Item::getBonusHP() const {
     return bonusHP;
 }
 
-CraftingRecipe::CraftingRecipe(Item* result, const unordered_map<Item*, int>& items): resultItem(result), requiredItems(items) {}
+CraftingRecipe::CraftingRecipe(Item* result, const unordered_map<Item*, int>& items){
+    resultItem = result;
+    requiredItems = items;
+}
 
 Item* CraftingRecipe::getResultItem() const {
     return resultItem;
 }
 
 bool CraftingRecipe::canCraft(unordered_map<Item*, int> *inventory){ // check if have enough material
+    if (inventory->size() == 0)
+        return false;
     for (const auto& entry : requiredItems) {
-        if (inventory->find(entry.first) != inventory->end() && (*inventory)[entry.first] < entry.second) {
+        if (inventory->find(entry.first) == inventory->end() || (*inventory)[entry.first] < entry.second){
             return false;
         }
     }
@@ -36,7 +41,7 @@ bool CraftingRecipe::canCraft(unordered_map<Item*, int> *inventory){ // check if
 }
 
 bool CraftingRecipe::isCraftable(){
-	if (requiredItems[NULL] == 1)
+	if (requiredItems.find(NULL) != requiredItems.end()) // there is a NULL ptr in the map => basic item that has no recipe
 		return false;
 	else
 		return true;
@@ -45,7 +50,7 @@ bool CraftingRecipe::isCraftable(){
 void CraftingRecipe::craft(unordered_map<Item*, int> *inventory) {
     if (canCraft(inventory)) {
         cout << "Crafting " << resultItem->getName() << "...\n";
-        for (const auto& entry : requiredItems) {
+        for (const auto entry : requiredItems) {
             (*inventory)[entry.first] -= entry.second;
         }
         (*inventory)[resultItem] += 1;
@@ -58,13 +63,12 @@ void CraftingRecipe::craft(unordered_map<Item*, int> *inventory) {
 
 
 CraftingFacade::CraftingFacade() {
-    initializeCraftingRecipes();
+    //initializeCraftingRecipes();
+    inventory = NULL;
 }
 
 CraftingFacade::~CraftingFacade() {
-    for (CraftingRecipe* recipe : craftingRecipes) {
-        delete recipe;
-    }
+    delete inventory;
 }
 void CraftingFacade::setCrafter(unordered_map<Item*, int> *inv){
 	inventory = inv;
@@ -103,8 +107,9 @@ void CraftingFacade::displayInventory() const {
 
 void CraftingFacade::addItem(const string& itemName, const int& amount){
 	Item* resultItem = getItemByName(itemName);
-	if (resultItem)
+	if (resultItem){
 		(*inventory)[resultItem] += amount;
+    }
 	else
 		cout << "Unknown item: " << itemName << endl;
 }
@@ -134,7 +139,7 @@ void CraftingFacade::initializeCraftingRecipes() {
 
     craftingRecipes.push_back(new CraftingRecipe(new Item(4, "Fiendish Codex", 20, 0), {{nullptr, 1}}));
 
-    craftingRecipes.push_back(new CraftingRecipe(new Item(5, "Zeal", 15, 10), {{getItemByName("Long Sword"), 1},{getItemByName("Cloak of Agility"), 1}}));
+    craftingRecipes.push_back(new CraftingRecipe(new Item(5, "Zeal", 15, 10), {{getItemByName("Long Sword"), 2}, {getItemByName("Kindle Gem"), 1}}));
 
     craftingRecipes.push_back(new CraftingRecipe(new Item(6, "Phage", 20, 10), {{getItemByName("Long Sword"), 1},{getItemByName("Kindle Gem"), 1}}));
 
@@ -155,7 +160,7 @@ void CraftingFacade::initializeCraftingRecipes() {
 	craftingRecipes.push_back(new CraftingRecipe(new Item(14, "Impossible Sword", 999, 999), {{getItemByName("Long Sword"), 999}})); 
 }
 
-Item* CraftingFacade::getItemByName(const string& itemName) const {
+Item* CraftingFacade::getItemByName(const string& itemName){
     for (const auto& recipe : craftingRecipes) {
         if (recipe->getResultItem()->getName() == itemName) {
             return recipe->getResultItem();

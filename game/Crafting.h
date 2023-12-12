@@ -38,7 +38,7 @@ public:
 class CraftingFacade {
 private:
     unordered_map<Item*, int> *inventory;
-    vector<CraftingRecipe*> craftingRecipes;
+    static vector<CraftingRecipe*> craftingRecipes;
 
 public:
     CraftingFacade();
@@ -49,9 +49,12 @@ public:
     void displayInventory() const;
 	void addItem(const string& itemName, const int& amount);
 	bool removeItem(const string& itemName, const int& amount);
+    static void initializeCraftingRecipes();
 private:
-    void initializeCraftingRecipes();
-    Item* getItemByName(const string& itemName) const;
+    
+    static Item* getItemByName(const string& itemName);
     CraftingRecipe* getCraftingRecipe(Item* resultItem) const;
 };
+
+vector<CraftingRecipe*> CraftingFacade::craftingRecipes;
 

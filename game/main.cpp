@@ -16,11 +16,13 @@ int main(){
 	vector<Entity*> players;
 	players.push_back(p1);
 	players.push_back(p2);
+	CraftingFacade::initializeCraftingRecipes();
 	CraftingFacade C;
 	C.setCrafter(p1->getInventory());
-	C.addItem("Long Sword", 1);
-	C.addItem("Long Sword", 1);
-	C.craftItem("Long Long Sword");
+	C.addItem("Long Sword", 2);
+	//C.addItem("Kindle Gem", 1);
+	C.craftItem("Zeal");
+	C.displayInventory();
 	C.resetCrafter();
 	
 	Game maingame;

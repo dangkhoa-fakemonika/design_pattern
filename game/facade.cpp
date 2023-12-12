@@ -44,6 +44,17 @@ private:
     unordered_map<Item*, int> requiredItems;
 
 public:
+    void showRecipe(){
+        if (requiredItems[NULL] == 1){
+            cout << "basic item\n";
+            return;
+        }
+        for (const auto& entry : requiredItems){
+            if (entry.first == NULL)
+                continue;
+            cout << entry.second  << " : " << entry.first->getName() << endl;
+        }
+    }
     CraftingRecipe(Item* result, const unordered_map<Item*, int>& items)
         : resultItem(result), requiredItems(items) {}
 
@@ -53,6 +64,8 @@ public:
 
     bool canCraft(unordered_map<Item*, int>& inventory){ // check if have enough material
         for (const auto& entry : requiredItems) {
+            if (entry.first == NULL)
+                continue;
             if (inventory.find(entry.first) != inventory.end() && inventory[entry.first] < entry.second) {
                 return false;
             }
@@ -89,6 +102,10 @@ private:
 public:
     CraftingFacade() {
         initializeCraftingRecipes();
+        for (int i = 0; i < craftingRecipes.size(); i++){
+            cout << "recipe for " << craftingRecipes[i]->getResultItem()->getName() << "\n";
+            craftingRecipes[i]->showRecipe();
+        }
     }
 
     ~CraftingFacade() {
@@ -171,7 +188,7 @@ private:
 
         craftingRecipes.push_back(new CraftingRecipe(
             new Item(6, "Phage", 20, 10),
-            {{nullptr, 1}}));
+            {{getItemByName("Long Sword"), 69}}));
 
         craftingRecipes.push_back(new CraftingRecipe(
             new Item(7, "Hextech Alternator", 40, 0),
