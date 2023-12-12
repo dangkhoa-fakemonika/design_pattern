@@ -121,7 +121,7 @@ void Player::TakeAction(vector<Entity*> players, vector<Entity*> enemies, Intera
 					cout << "[" << i + 1 << "] " << players[i]->getName() << endl; 
 			cin >> index;
 			cout << name << " heals " << players[index - 1]->getName() << " !" << endl;
-			HealTarget(&v->Heal, enemies[index - 1]);
+			HealTarget(&v->Heal, players[index - 1]);
 			break;
 		case 3:
 			cout << endl;
@@ -143,6 +143,22 @@ void Player::TakeAction(vector<Entity*> players, vector<Entity*> enemies, Intera
 
 Game::Game() : gold(0), level(1){}
 
+string Game::item_list[13] = {
+		"Long Sword",
+		"Cloak of Agility",
+		"Kindle Gem",
+		"Fiendish Codex",
+		"Zeal",
+		"Phage",
+		"Hextech Alternator",
+		"Needlessly Large Rod",
+		"Divine Sunderer",
+		"Night Harvester",
+		"Rabadon's Deathcap",
+		"Long Long Sword",
+		"Impossible Sword",
+	};
+
 void Game::setLevel(){
 	cout << "Set level (1 | 2): ";
 	cin >> level;
@@ -153,11 +169,16 @@ void Game::setLevel(){
 	}
 }
 
+void Game::setGold(int g){
+	gold = abs(g);
+}
+
 void Game::Combat(vector<Entity*> players){
 	for (int i = 0; i < players.size(); i++)
 		players[i]->ResetState();
 	
 	vector<Entity*> enemies;
+	vector<Entity*> dead_enemies;
 	vector<Entity*> dead_players;
 	
 	InteractiveVisitors* v = new InteractiveVisitors;
@@ -190,13 +211,13 @@ void Game::Combat(vector<Entity*> players){
 			players[i]->TakeAction(players, enemies, v);
 		for (int i = 0; i < enemies.size(); i++)
 			if (!enemies[i]->getState()){
-				delete enemies[i];
-				enemies[i] = NULL;
+				dead_enemies.push_back(enemies[i]);
 				enemies.erase(enemies.begin() + i);
 			}
 		if (enemies.size() == 0){
 			ingame = false;
 			cout << "BATTLE WON!" << endl;
+			break;
 		}
 		else
 			ingame = true;
@@ -213,6 +234,7 @@ void Game::Combat(vector<Entity*> players){
 		if (players.size() == 0){
 			ingame = false;
 			cout << "y o u   d i e d" << endl;
+			break;
 		}
 		else
 			ingame = true;
@@ -223,34 +245,22 @@ void Game::Combat(vector<Entity*> players){
 		dead_players[i]->ResetState();
 		players.push_back(dead_players[i]);
 	}
+	for (int i = 0; i < dead_enemies.size(); i++)
+		delete dead_enemies[i];
 }
 
 void Game::ShopnCraft(Player *p){
-	CraftingFacade *ShopAndCraft;
+	CraftingFacade *ShopAndCraft = new CraftingFacade;
 	ShopAndCraft->setCrafter(p->getInventory());
-	
-	string item_list[14] = {
-		"Long Sword",
-		"Cloak of Agility",
-		"Kindle Gem",
-		"Fiendish Codex",
-		"Zeal",
-		"Phage",
-		"Hextech Alternator",
-		"Needlessly Large Rod",
-		"Divine Sunderer",
-		"Night Harvester",
-		"Rabadon's Deathcap",
-		"Long Long Sword",
-		"Impossible Sword",
-	};
+	cout << "Welcome to Shop n' Craft!! " << endl;
 	
 	int action, option, amount;
 	bool quit = true;
 	while (quit){
-		cout << "Current gold: " << gold << endl << "Choose action: " << endl;
+		cout << "Current gold: " << gold << endl ;
 		cout << "Current Inventory: " << endl;
 			ShopAndCraft->displayInventory();
+		cout << "Choose action: " << endl;
 		cout << "[1] Buy | [2] Craft | [3] Sell" << endl;
 		cin >> action;
 		switch (action){
@@ -291,12 +301,14 @@ void Game::ShopnCraft(Player *p){
 //			        	cout << "[" << index++ << "]" << entry.first->getName() << ": " << entry.second << "\n";
 //			    }
 				break;
+			default:
+				break;
 		}
 		
 		cout << "Continue browsing? (1 = yes, 0 = no)" << endl;
 		cin >> quit;
 	}
 	
-	
 	ShopAndCraft->resetCrafter();
+	delete ShopAndCraft;
 }

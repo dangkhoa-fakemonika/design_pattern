@@ -7,6 +7,7 @@ int main(){
 	srand(time(NULL));
 	string nametemp;
 	cout << "Enter your name: ";
+//	cin.ignore();
 	getline(cin, nametemp);
 	
 	Player *p1 = new Player(nametemp, 20000, 9000);
@@ -15,8 +16,15 @@ int main(){
 	vector<Entity*> players;
 	players.push_back(p1);
 	players.push_back(p2);
+	CraftingFacade C;
+	C.setCrafter(p1->getInventory());
+	C.addItem("Long Sword", 1);
+	C.addItem("Long Sword", 1);
+	C.craftItem("Long Long Sword");
+	C.resetCrafter();
 	
 	Game maingame;
+	maingame.setGold(200000);
 	int options;
 	while (true){
 		cout << "Select option: " << endl;
