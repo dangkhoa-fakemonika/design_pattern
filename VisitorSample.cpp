@@ -38,7 +38,7 @@ public:
 		v->InteractForest(this);
 	}
 	
-	int getTreeDensity(){
+	float getTreeDensity(){
 		return tree_density;
 	}
 };
@@ -53,7 +53,7 @@ public:
 		v->InteractCoastal(this);
 	}
 	
-	int getSeaLevel(){
+	float getSeaLevel(){
 		return average_sea_level;
 	}
 };
@@ -68,7 +68,7 @@ public:
 		v->InteractDesert(this);
 	}
 	
-	int getDesertTemp(){
+	float getDesertTemp(){
 		return average_temp;
 	}
 };
@@ -76,12 +76,15 @@ public:
 class GetInfoVisitor : public Visitor{
 public:
 	void InteractForest(Forest *F){
+		cout << F->getName() << endl;
 		cout << "Current tree density: " << F->getTreeDensity() << endl;
 	}
 	void InteractCoastal(Coastal *C){
+		cout << C->getName() << endl;
 		cout << "Current average sea level: " << C->getSeaLevel() << endl;
 	}
 	void InteractDesert(Desert* D){
+		cout << D->getName() << endl;
 		cout << "Current average temperature: " << D->getDesertTemp() << endl;
 	}
 };
@@ -116,7 +119,7 @@ public:
 };
 
 //
-//void AnalyzeData(){
+//void AnalyzeData(Environment *list[], int n){
 //	cout << "Getting data from sources..." << endl;
 //	for (int i = 0; i < n; i++)
 //		if (dynamic_cast<Forest*>(list[i])){
@@ -124,6 +127,8 @@ public:
 //			F->getTreeDensity();
 //			...
 //		}
+//		if (dynamic_cast<Coastal*>(list[i]))
+//		...
 //}
 
 void AnalyzeData(Environment *list[], int n){
@@ -144,7 +149,18 @@ void AnalyzeData(Environment *list[], int n){
 	delete check;
 }
 int main(){
-
+	Forest *sampleForest = new Forest("Amazon", 100, 1.8);
+	Coastal *sampleCoastal = new Coastal("Phu_Quoc", 200, 1.6);
+	Desert *sampleDesert = new Desert("Sahara", 300, 180);
+	
+	Environment *list[3] = {sampleForest, sampleCoastal, sampleDesert};
+	
+	AnalyzeData(list, 3);
+	
+	delete sampleForest;
+	delete sampleCoastal;
+	delete sampleDesert;
+	
 	return 0;	
 }
 
