@@ -124,6 +124,8 @@ void Player::TakeAction(vector<Entity*> players, vector<Entity*> enemies, Intera
 			HealTarget(&v->Heal, players[index - 1]);
 			break;
 		case 3:
+			cout << "Current " << getName() << " info: " << endl;
+			ShowInfo();
 			cout << endl;
 			cout << "Taking info of enemies..." << endl;
 			cout << "###########################################" << endl;
@@ -337,7 +339,7 @@ void Game::ShopnCraft(Player *p){
 		cout << "Continue browsing? (1 = yes, 0 = no)" << endl;
 		int i_quit;
 		cin >> i_quit;
-		if (i_quit > 0)
+		if (i_quit == 0)
 			quit = false;
 	}
 	
