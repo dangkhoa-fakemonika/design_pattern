@@ -63,7 +63,7 @@ void CraftingRecipe::craft(unordered_map<Item*, int> *inventory) {
 
 
 CraftingFacade::CraftingFacade() {
-    //initializeCraftingRecipes();
+    initializeCraftingRecipes();
     inventory = NULL;
 }
 
@@ -139,11 +139,11 @@ void CraftingFacade::initializeCraftingRecipes() {
 
     craftingRecipes.push_back(new CraftingRecipe(new Item(4, "Fiendish Codex", 20, 0), {{nullptr, 1}}));
 
-    craftingRecipes.push_back(new CraftingRecipe(new Item(5, "Zeal", 15, 10), {{getItemByName("Long Sword"), 2}, {getItemByName("Kindle Gem"), 1}}));
+    craftingRecipes.push_back(new CraftingRecipe(new Item(5, "Zeal", 15, 10), {{getItemByName("Long Sword"), 2}, {getItemByName("Cloak of Agility"), 1}}));
 
     craftingRecipes.push_back(new CraftingRecipe(new Item(6, "Phage", 20, 10), {{getItemByName("Long Sword"), 1},{getItemByName("Kindle Gem"), 1}}));
 
-    craftingRecipes.push_back(new CraftingRecipe(new Item(7, "Hextech Alternator", 40, 0), {{getItemByName("Kindle Gem"), 1}, {getItemByName("Fiendish Codex"), 1}}));
+    craftingRecipes.push_back(new CraftingRecipe(new Item(7, "Hextech Alternator", 40, 0), {{getItemByName("Kindle Gem"), 1}, {getItemByName("Fiendish Codex"), 1}}));	
 
     craftingRecipes.push_back(new CraftingRecipe(new Item(8, "Needlessly Large Rod", 50, 0), {{getItemByName("Fiendish Codex"), 1}, {getItemByName("Cloak of Agility"), 1}}));
 

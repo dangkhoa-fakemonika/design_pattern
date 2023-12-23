@@ -9,7 +9,7 @@ class Game{
 private:
 	int gold;
 	int level;
-	static string item_list[13];
+	static string item_list[14];
 public:
 	Game();
 	void setLevel();

@@ -143,7 +143,7 @@ void Player::TakeAction(vector<Entity*> players, vector<Entity*> enemies, Intera
 
 Game::Game() : gold(0), level(1){}
 
-string Game::item_list[13] = {
+string Game::item_list[14] = {
 		"Long Sword",
 		"Cloak of Agility",
 		"Kindle Gem",
@@ -152,6 +152,7 @@ string Game::item_list[13] = {
 		"Phage",
 		"Hextech Alternator",
 		"Needlessly Large Rod",
+		"Galeforce",
 		"Divine Sunderer",
 		"Night Harvester",
 		"Rabadon's Deathcap",
@@ -297,15 +298,15 @@ void Game::ShopnCraft(Player *p){
 					cout << "Not sufficient funds!" << endl;
 				else{
 					while(amount-- != 0)	
-					ShopAndCraft->addItem(item_list[option - 1], 1);
+						ShopAndCraft->addItem(item_list[option - 1], 1);
 				}
 				break;
 			case 2:
 				cout << "Craft items (50G craft fees): " << endl;
-				for (int i = 4; i < 13; i++)
+				for (int i = 4; i < 14; i++)
 					cout << "[" << i - 3 << "] " << item_list[i] << endl;
 				cin >> option;
-				if (option > 10 || option < 1)
+				if (option > 11 || option < 1)
 					cout << "Invalid option." << endl;
 				else if (gold < 50)
 					cout << "Not sufficient funds!" << endl;
