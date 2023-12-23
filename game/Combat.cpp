@@ -207,37 +207,57 @@ void Game::Combat(vector<Entity*> players){
 	
 	bool ingame = true;
 	while(ingame){
-		for (int i = 0; i < players.size(); i++)
+		for (int i = 0; i < players.size(); i++){
 			players[i]->TakeAction(players, enemies, v);
-		for (int i = 0; i < enemies.size(); i++)
-			if (!enemies[i]->getState()){
-				dead_enemies.push_back(enemies[i]);
-				enemies.erase(enemies.begin() + i);
+			
+			for (int i = 0; i < enemies.size(); i++)
+				if (!enemies[i]->getState()){
+					dead_enemies.push_back(enemies[i]);
+					enemies.erase(enemies.begin() + i);
+				}
+			
+			if (enemies.size() == 0){
+				ingame = false;
+				cout << "BATTLE WON!" << endl;
+				break;
 			}
+			else
+				ingame = true;
+		}
+			
 		if (enemies.size() == 0){
 			ingame = false;
-			cout << "BATTLE WON!" << endl;
+//			cout << "BATTLE WON!" << endl;
 			break;
 		}
 		else
 			ingame = true;
 			
-		for (int i = 0; i < enemies.size(); i++)
+		for (int i = 0; i < enemies.size(); i++){
 			enemies[i]->TakeAction(players, enemies, v);
 		
-		for (int i = 0; i < players.size(); i++)
-			if (!players[i]->getState()){
-				dead_players.push_back(players[i]);
-				players.erase(players.begin() + i);
+			for (int i = 0; i < players.size(); i++)
+				if (!players[i]->getState()){
+					dead_players.push_back(players[i]);
+					players.erase(players.begin() + i);
+				}
+			
+			if (players.size() == 0){
+				ingame = false;
+				cout << "y o u   d i e d" << endl;
+				break;
 			}
+			else
+				ingame = true;	
+		}
 		
 		if (players.size() == 0){
 			ingame = false;
-			cout << "y o u   d i e d" << endl;
+//			cout << "y o u   d i e d" << endl;
 			break;
 		}
 		else
-			ingame = true;
+			ingame = true;	
 	}
 	
 	gold = v->Attack.GetBattlePoints() / 1000;
