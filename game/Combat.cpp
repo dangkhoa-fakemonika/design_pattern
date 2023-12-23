@@ -175,6 +175,8 @@ void Game::setGold(int g){
 }
 
 void Game::Combat(vector<Entity*> players){
+	cout << endl << "[=================================================]" << endl;
+	cout << "Entering combat!" << endl << endl;
 	for (int i = 0; i < players.size(); i++)
 		players[i]->ResetState();
 	
@@ -261,18 +263,22 @@ void Game::Combat(vector<Entity*> players){
 			ingame = true;	
 	}
 	
-	gold = v->Attack.GetBattlePoints() / 1000;
+	gold += v->Attack.GetBattlePoints() / 1000;
+	cout << "You got " << v->Attack.GetBattlePoints() / 1000 << "!" << endl;
+	cout << endl; 
 	for (int i = 0; i < dead_players.size(); i++){
 		dead_players[i]->ResetState();
 		players.push_back(dead_players[i]);
 	}
 	for (int i = 0; i < dead_enemies.size(); i++)
 		delete dead_enemies[i];
+	level = level % 2 + 1;
 }
 
 void Game::ShopnCraft(Player *p){
 	CraftingFacade *ShopAndCraft = new CraftingFacade;
 	ShopAndCraft->setCrafter(p->getInventory());
+	cout << endl << "[=================================================]" << endl;
 	cout << "Welcome to Shop n' Craft!! " << endl;
 	
 	int action, option, amount;
@@ -292,26 +298,28 @@ void Game::ShopnCraft(Player *p){
 				cin >> option;
 				cout << "Quantity? : ";
 				cin >> amount;
-				if (option > 3 || option < 1 || amount < 1)
+				if (option > 4 || option < 1 || amount < 1)
 					cout << "Invalid option." << endl;
 				else if (gold < 400 * amount)
 					cout << "Not sufficient funds!" << endl;
 				else{
 					while(amount-- != 0)	
 						ShopAndCraft->addItem(item_list[option - 1], 1);
+					cout << "Items bought sucessfully." << endl;
 				}
 				break;
 			case 2:
 				cout << "Craft items (50G craft fees): " << endl;
-				for (int i = 4; i < 14; i++)
+				for (int i = 4; i < 13; i++)
 					cout << "[" << i - 3 << "] " << item_list[i] << endl;
 				cin >> option;
-				if (option > 11 || option < 1)
+				if (option > 9 || option < 1)
 					cout << "Invalid option." << endl;
 				else if (gold < 50)
 					cout << "Not sufficient funds!" << endl;
 				else{
 					ShopAndCraft->craftItem(item_list[option + 3]);
+					cout << "Item crafted sucessfully." << endl;
 				}
 				break;
 			case 3:
@@ -327,7 +335,10 @@ void Game::ShopnCraft(Player *p){
 		}
 		
 		cout << "Continue browsing? (1 = yes, 0 = no)" << endl;
-		cin >> quit;
+		int i_quit;
+		cin >> i_quit;
+		if (i_quit > 0)
+			quit = false;
 	}
 	
 	ShopAndCraft->resetCrafter();

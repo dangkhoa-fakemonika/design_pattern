@@ -7,7 +7,6 @@ int main(){
 	srand(time(NULL));
 	string nametemp;
 	cout << "Enter your name: ";
-//	cin.ignore();
 	getline(cin, nametemp);
 	
 	Player *p1 = new Player(nametemp, 20000, 9000);
@@ -16,22 +15,16 @@ int main(){
 	vector<Entity*> players;
 	players.push_back(p1);
 	players.push_back(p2);
-//	CraftingFacade::initializeCraftingRecipes();
-//	CraftingFacade C;
-//	C.setCrafter(p1->getInventory());
-//	C.addItem("Long Sword", 2);
-//	//C.addItem("Kindle Gem", 1);
-//	C.craftItem("Zeal");
-//	C.displayInventory();
-//	C.resetCrafter();
-//	
+
 	Game maingame;
 	maingame.setGold(200000);
 	int options;
 	while (true){
-		cout << "Select option: " << endl;
+		cout << endl << "[=================================================]" << endl;
 		cout << "[1] FIGHT!!! | [2] Shop n' craft | [3] Quit" << endl;
+		cout << "Select option: ";
 		cin >> options;
+		cout << "[=================================================]" << endl;
 		if (options == 1)
 			maingame.Combat(players);
 		else if (options == 2)
